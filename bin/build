@@ -7,6 +7,7 @@
 arduino-builder \
 -fqbn archlinux-arduino:avr:uno \
 -hardware /usr/share/arduino/hardware \
+-build-path ${PWD}/.build \
 -tools /usr/bin \
 waterwell.ino
 
@@ -20,4 +21,4 @@ avrdude -V -F \
 -P /dev/arduino/uno \
 -c arduino \
 -b 115200 \
--U flash:w:/tmp/build/waterwell.ino.hex
+-U flash:w:${PWD}/.build/waterwell.ino.hex
