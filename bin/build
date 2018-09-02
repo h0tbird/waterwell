@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #------------------------------------------------------------------------------
-# Compile:
+# Build and flash:
 #------------------------------------------------------------------------------
 
 arduino-builder \
@@ -9,13 +9,8 @@ arduino-builder \
 -hardware /usr/share/arduino/hardware \
 -build-path ${PWD}/.build \
 -tools /usr/bin \
-waterwell.ino
-
-#------------------------------------------------------------------------------
-# Flash:
-#------------------------------------------------------------------------------
-
-avrdude -V -F \
+waterwell.ino \
+&& avrdude -V -F \
 -C /etc/avrdude.conf \
 -p atmega328p \
 -P /dev/arduino/uno \

@@ -23,8 +23,16 @@ EOF
 udevadm control --reload-rules
 ```
 
-## Build
+## Build and flash
 
 ```
 ./bin/build
 ```
+
+## Console
+
+```
+picocom -b 9600 /dev/arduino/uno
+```
+
+CTRL + A + x
