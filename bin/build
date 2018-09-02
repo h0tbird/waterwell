@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------
+# Compile:
+#------------------------------------------------------------------------------
+
+arduino-builder \
+-fqbn archlinux-arduino:avr:uno \
+-hardware /usr/share/arduino/hardware \
+-tools /usr/bin \
+waterwell.ino
+
+#------------------------------------------------------------------------------
+# Flash:
+#------------------------------------------------------------------------------
+
+avrdude -V -F \
+-C /etc/avrdude.conf \
+-p atmega328p \
+-P /dev/arduino/uno \
+-c arduino \
+-b 115200 \
+-U flash:w:/tmp/build/waterwell.ino.hex
