@@ -22,6 +22,16 @@ EOF
 ```
 udevadm control --reload-rules
 ```
+## Libs
+
+```
+git clone git@github.com:PaulStoffregen/OneWire.git libs/OneWire
+git clone git@github.com:milesburton/Arduino-Temperature-Control-Library.git libs/DallasTemperature
+```
+
+```
+rm -rf libs/*/.git
+```
 
 ## Build and flash
 
@@ -35,4 +45,4 @@ udevadm control --reload-rules
 picocom -b 9600 /dev/arduino/uno
 ```
 
-CTRL + A + x
+Exit: `Ctrl` + `a` release `Ctrl` + `x`

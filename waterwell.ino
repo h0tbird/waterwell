@@ -1,22 +1,22 @@
-int counter = 1;
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
-void setup() {
+#define ONE_WIRE_BUS 2
+
+OneWire oneWire(ONE_WIRE_BUS);
+DallasTemperature sensors(&oneWire);
+
+void setup(void) {
   Serial.begin(9600);
-  pinMode(13, OUTPUT);
+  Serial.println("Dallas Temperature IC Control Library Demo");
+  sensors.begin();
 }
 
-void loop() {
-  digitalWrite(13, HIGH);   // set the LED on
-  delay(1000);              // wait for a second
-  digitalWrite(13, LOW);    // set the LED off
-  delay(1000);              // wait for a second
-  digitalWrite(13, HIGH);   // set the LED on
-  delay(100);              // wait for a second
-  digitalWrite(13, LOW);    // set the LED off
-  delay(100);              // wait for a second
-  Serial.println("Hello World");
-  Serial.print("Counter = ");
-  Serial.println(counter);
+void loop(void) {
+  Serial.print(" Requesting temperatures...");
+  sensors.requestTemperatures();
+  Serial.println("DONE");
+  Serial.print("Temperature is: ");
+  Serial.print(sensors.getTempCByIndex(0));
   delay(1000);
-  counter++;
 }

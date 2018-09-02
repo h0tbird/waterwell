@@ -8,6 +8,7 @@ arduino-builder \
 -fqbn archlinux-arduino:avr:uno \
 -hardware /usr/share/arduino/hardware \
 -build-path ${PWD}/.build \
+-libraries libs \
 -tools /usr/bin \
 waterwell.ino \
 && avrdude -V -F \
