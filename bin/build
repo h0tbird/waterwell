@@ -18,7 +18,7 @@ arduino-builder \
 -build-path ${PWD}/.build \
 -libraries libs \
 -tools /usr/bin \
-ww${TXRX}.ino
+ww${TXRX}/ww${TXRX}.ino
 
 #------------------------------------------------------------------------------
 # Flash:

@@ -2,10 +2,16 @@
 #include <DallasTemperature.h>
 #include <RH_ASK.h>
 
+// Constants:
 #define ONE_WIRE_BUS 2
 #define SENSOR_RESOLUTION 12
 #define SENSOR_INDEX 0
 
+// Variables:
+float temp;
+String str_temp;
+
+// Initialize:
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 DeviceAddress sensorDeviceAddress;
@@ -20,13 +26,21 @@ void setup(void) {
 }
 
 void loop(void) {
-  sensors.requestTemperatures();
-  Serial.print("Temperature is: ");
-  Serial.println(sensors.getTempCByIndex(SENSOR_INDEX), 4);
 
-  const char *msg = "Hello world";
+  // Acquire the data:
+  sensors.requestTemperatures();
+  temp = sensors.getTempCByIndex(SENSOR_INDEX);
+  str_temp = String(temp);
+
+  // Print to serial console:
+  Serial.print("Temperature is: ");
+  Serial.println(str_temp);
+
+  // Transfer via 433MHz:
+  static char *msg = str_temp.c_str();
   rf_driver.send((uint8_t *)msg, strlen(msg));
   rf_driver.waitPacketSent();
 
-  delay(5000);
+  // Sleep:
+  delay(2000);
 }
