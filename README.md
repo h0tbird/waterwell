@@ -40,7 +40,8 @@ rm -rf libs/*/.git
 ## Build and flash
 
 ```
-./bin/build
+./bin/build tx --flash
+./bin/build rx --flash
 ```
 
 ## Console
