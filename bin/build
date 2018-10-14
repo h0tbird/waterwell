@@ -10,11 +10,11 @@ arduino-builder \
 -build-path ${PWD}/.build \
 -libraries libs \
 -tools /usr/bin \
-waterwell.ino \
+wwtx.ino \
 && avrdude -V -F \
 -C /etc/avrdude.conf \
 -p atmega328p \
--P /dev/arduino/uno \
+-P /dev/arduino/uno/1 \
 -c arduino \
 -b 115200 \
--U flash:w:${PWD}/.build/waterwell.ino.hex
+-U flash:w:${PWD}/.build/wwtx.ino.hex
