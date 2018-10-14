@@ -47,7 +47,8 @@ rm -rf libs/*/.git
 ## Console
 
 ```
-picocom -b 9600 /dev/arduino/uno
+picocom -b 9600 /dev/arduino/uno/tx
+picocom -b 9600 /dev/arduino/uno/rx
 ```
 
 Exit: `Ctrl` + (`a`,`x`)
