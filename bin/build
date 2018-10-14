@@ -1,7 +1,15 @@
 #!/bin/bash
 
 #------------------------------------------------------------------------------
-# Build and flash:
+# Parameters:
+#------------------------------------------------------------------------------
+
+[[ $1 != 'tx' && $1 != 'rx' ]] && echo "Usage: $0 (tx|rx) [--flash]" && exit 1 || {
+  TXRX=$1 && DEVICE="/dev/arduino/uno/${TXRX}" && shift
+}
+
+#------------------------------------------------------------------------------
+# Build:
 #------------------------------------------------------------------------------
 
 arduino-builder \
@@ -10,11 +18,18 @@ arduino-builder \
 -build-path ${PWD}/.build \
 -libraries libs \
 -tools /usr/bin \
-wwtx.ino \
-&& avrdude -V -F \
--C /etc/avrdude.conf \
--p atmega328p \
--P /dev/arduino/uno/1 \
--c arduino \
--b 115200 \
--U flash:w:${PWD}/.build/wwtx.ino.hex
+ww${TXRX}.ino
+
+#------------------------------------------------------------------------------
+# Flash:
+#------------------------------------------------------------------------------
+
+[[ -c ${DEVICE} && $1 == '--flash' ]] && {
+  avrdude -V -F \
+  -C /etc/avrdude.conf \
+  -p atmega328p \
+  -P ${DEVICE} \
+  -c arduino \
+  -b 115200 \
+  -U flash:w:${PWD}/.build/ww${TXRX}.ino.hex
+}

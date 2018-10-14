@@ -17,8 +17,8 @@ ATTRS{serial}=="5573932323135180A092"
 
 ```
 # cat << EOF > /etc/udev/rules.d/99-arduino.rules
-SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ATTRS{serial}=="55731323236351706161", SYMLINK+="arduino/uno/1"
-SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ATTRS{serial}=="5573932323135180A092", SYMLINK+="arduino/uno/2"
+SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ATTRS{serial}=="55731323236351706161", SYMLINK+="arduino/uno/tx"
+SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ATTRS{serial}=="5573932323135180A092", SYMLINK+="arduino/uno/rx"
 EOF
 ```
 
@@ -30,6 +30,7 @@ udevadm control --reload-rules
 ```
 git clone git@github.com:PaulStoffregen/OneWire.git libs/OneWire
 git clone git@github.com:milesburton/Arduino-Temperature-Control-Library.git libs/DallasTemperature
+git clone git@github.com:PaulStoffregen/RadioHead.git libs/RadioHead
 ```
 
 ```
@@ -48,4 +49,4 @@ rm -rf libs/*/.git
 picocom -b 9600 /dev/arduino/uno
 ```
 
-Exit: `Ctrl` + `a` release `Ctrl` + `x`
+Exit: `Ctrl` + (`a`,`x`)
