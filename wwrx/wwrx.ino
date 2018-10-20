@@ -9,11 +9,11 @@ void setup(void) {
 
 void loop(void) {
 
-  uint8_t buf[5];
+  uint8_t buf[13];
   uint8_t buflen = sizeof(buf);
 
   if (rf_driver.recv(buf, &buflen)) {
-    Serial.print("Temperature RX: ");
+    Serial.print("Temperatures RX:");
     Serial.println((char *)buf);
   }
 }

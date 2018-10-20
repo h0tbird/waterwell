@@ -5,11 +5,11 @@
 // Constants:
 #define ONE_WIRE_BUS 2
 #define SENSOR_RESOLUTION 12
-#define SENSOR_INDEX 0
+#define SENSOR_COUNT 2
 
 // Variables:
 float temp;
-String str_temp;
+String str1, str2;
 
 // Initialize:
 OneWire oneWire(ONE_WIRE_BUS);
@@ -18,7 +18,11 @@ DeviceAddress deviceAddress;
 RH_ASK rf_driver;
 
 // Sensors:
-DeviceAddress sensor00 = { 0x28, 0xB, 0xCA, 0x77, 0x91, 0x9, 0x2, 0xDA };
+DeviceAddress sensorList [SENSOR_COUNT] = {
+  { 0x28, 0x7, 0xCA, 0x77, 0x91, 0x16, 0x2, 0x53 }, // 00
+  { 0x28, 0xEC, 0x2D, 0x77, 0x91, 0x4, 0x2, 0x74 }, // 01
+  // { 0x28, 0xB, 0xCA, 0x77, 0x91, 0x9, 0x2, 0xDA },  // 10
+};
 
 //-----------------------------------------------------------------------------
 // printSensors
@@ -34,7 +38,7 @@ void printSensors(void){
   Serial.print("Device count: ");
   Serial.println(deviceCount);
 
-  for(dev = 0; dev < deviceCount; dev++) {
+  for(dev = 1; dev <= deviceCount; dev++) {
 
     Serial.print("device-");
     Serial.print(dev);
@@ -62,8 +66,9 @@ void setup(void) {
 
   // DS18B20:
   sensors.begin();
-  sensors.getAddress(deviceAddress, SENSOR_INDEX);
-  sensors.setResolution(deviceAddress, SENSOR_RESOLUTION);
+  for (int i = 0; i < SENSOR_COUNT; i++) {
+    sensors.setResolution(sensorList[i], SENSOR_RESOLUTION);
+  }
 
   // 433Mhz:
   rf_driver.init();
@@ -78,17 +83,24 @@ void setup(void) {
 
 void loop(void) {
 
-  // Acquire the data:
+  // Initialize the data:
   sensors.requestTemperatures();
-  temp = sensors.getTempCByIndex(SENSOR_INDEX);
-  str_temp = String(temp);
+  str1 = String();
+  str2 = String();
+
+  // Read the temperatures:
+  for (int i = 0; i < SENSOR_COUNT; i++) {
+    temp = sensors.getTempC(sensorList[i]);
+    str2 = str1 + ' ' + temp;
+    str1 = str2;
+  }
 
   // Print to serial console:
-  Serial.print("Temperature TX: ");
-  Serial.println(str_temp);
+  Serial.print("Temperatures TX:");
+  Serial.println(str2);
 
   // Transfer via 433MHz:
-  static char *msg = str_temp.c_str();
+  static char *msg = str2.c_str();
   rf_driver.send((uint8_t *)msg, strlen(msg));
   rf_driver.waitPacketSent();
 
