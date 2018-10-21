@@ -5,7 +5,7 @@
 // Constants:
 #define ONE_WIRE_BUS 2
 #define SENSOR_RESOLUTION 12
-#define SENSOR_COUNT 2
+#define SENSOR_COUNT 3
 
 // Variables:
 float temp;
@@ -14,13 +14,13 @@ String str1, str2;
 // Initialize:
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
-DeviceAddress deviceAddress;
 RH_ASK rf_driver;
 
 // Sensors:
 DeviceAddress sensorList [SENSOR_COUNT] = {
-  { 0x28, 0x7, 0xCA, 0x77, 0x91, 0x16, 0x2, 0x53 }, // 00
-  { 0x28, 0xEC, 0x2D, 0x77, 0x91, 0x4, 0x2, 0x74 }, // 01
+  { 0x28, 0x7, 0xCA, 0x77, 0x91, 0x16, 0x2, 0x53 }, // 01
+  { 0x28, 0xEC, 0x2D, 0x77, 0x91, 0x4, 0x2, 0x74 }, // 02
+  { 0x28, 0xDB, 0x63, 0x77, 0x91, 0x3, 0x2, 0x39 }, // 03
   // { 0x28, 0xB, 0xCA, 0x77, 0x91, 0x9, 0x2, 0xDA },  // 10
 };
 
@@ -44,7 +44,7 @@ void printSensors(void){
     Serial.print(dev);
     Serial.print(" =");
 
-    sensors.getAddress(addr, (uint8_t)dev);
+    sensors.getAddress(addr, (uint8_t)dev-1);
 
     for (i = 0; i < 8; i++) {
       Serial.write(' ');
