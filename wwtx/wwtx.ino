@@ -3,26 +3,44 @@
 #include <RH_ASK.h>
 
 // Constants:
-#define ONE_WIRE_BUS 2
+#define ONE_WIRE_BUS_0 2
+#define ONE_WIRE_BUS_1 3
 #define SENSOR_RESOLUTION 12
+#define BUSES_COUNT 2
 #define SENSOR_COUNT 3
 
 // Variables:
 float temp;
 String str1, str2;
 
-// Initialize:
-OneWire oneWire(ONE_WIRE_BUS);
-DallasTemperature sensors(&oneWire);
-RH_ASK rf_driver;
-
-// Sensors:
-DeviceAddress sensorList [SENSOR_COUNT] = {
-  { 0x28, 0x7, 0xCA, 0x77, 0x91, 0x16, 0x2, 0x53 }, // 01
-  { 0x28, 0xEC, 0x2D, 0x77, 0x91, 0x4, 0x2, 0x74 }, // 02
-  { 0x28, 0xDB, 0x63, 0x77, 0x91, 0x3, 0x2, 0x39 }, // 03
-  // { 0x28, 0xB, 0xCA, 0x77, 0x91, 0x9, 0x2, 0xDA },  // 10
+// Initialize buses:
+OneWire buses[BUSES_COUNT] = {
+  OneWire(ONE_WIRE_BUS_0),
+  OneWire(ONE_WIRE_BUS_1),
 };
+
+// Initialize sensors:
+DallasTemperature sensors[BUSES_COUNT] = {
+  DallasTemperature(&buses[0]),
+  DallasTemperature(&buses[1]),
+};
+
+// Sensors list:
+DeviceAddress sensorsList [BUSES_COUNT] [SENSOR_COUNT] = {
+  {
+    { 0x28, 0x7, 0xCA, 0x77, 0x91, 0x16, 0x2, 0x53 },  // 01
+    { 0x28, 0xEC, 0x2D, 0x77, 0x91, 0x4, 0x2, 0x74 },  // 02
+    { 0x28, 0xDB, 0x63, 0x77, 0x91, 0x3, 0x2, 0x39 },  // 03
+  },
+  {
+    { 0x28, 0xD0, 0xEC, 0x77, 0x91, 0x9, 0x2, 0x82 },  // 04
+    { 0x28, 0xE0, 0x6D, 0x77, 0x91, 0x10, 0x2, 0x37 }, // 05
+    { 0x28, 0x2C, 0x1C, 0x77, 0x91, 0x6, 0x2, 0x33 },  // 06
+  },
+};
+
+// Initialize 433MHz:
+RH_ASK rf_driver;
 
 //-----------------------------------------------------------------------------
 // printSensors
@@ -31,28 +49,33 @@ DeviceAddress sensorList [SENSOR_COUNT] = {
 void printSensors(void){
 
   uint8_t deviceCount;
-  byte dev,addr[8],i;
+  byte addr[8];
 
-  // Count sensors:
-  deviceCount = sensors.getDeviceCount();
-  Serial.print("Device count: ");
-  Serial.println(deviceCount);
+  for (int b = 0; b < BUSES_COUNT; b++) {
 
-  for(dev = 1; dev <= deviceCount; dev++) {
+    deviceCount = sensors[b].getDeviceCount();
+    Serial.print("\nBus[");
+    Serial.print(b);
+    Serial.print("] has ");
+    Serial.print(deviceCount);
+    Serial.println(" sensors:");
 
-    Serial.print("device-");
-    Serial.print(dev);
-    Serial.print(" =");
+    for(int s = 0; s < deviceCount; s++) {
 
-    sensors.getAddress(addr, (uint8_t)dev-1);
+      Serial.print("sensor[");
+      Serial.print(s);
+      Serial.print("] =");
 
-    for (i = 0; i < 8; i++) {
-      Serial.write(' ');
-      Serial.print(addr[i], HEX);
+      sensors[b].getAddress(addr, (uint8_t)s);
+
+      for (int i = 0; i < 8; i++) {
+        Serial.write(' ');
+        Serial.print(addr[i], HEX);
+      }
+      Serial.println();
     }
-
-    Serial.println();
   }
+  Serial.println();
 }
 
 //-----------------------------------------------------------------------------
@@ -65,9 +88,11 @@ void setup(void) {
   Serial.begin(9600);
 
   // DS18B20:
-  sensors.begin();
-  for (int i = 0; i < SENSOR_COUNT; i++) {
-    sensors.setResolution(sensorList[i], SENSOR_RESOLUTION);
+  for (int b = 0; b < BUSES_COUNT; b++) {
+    sensors[b].begin();
+    for (int s = 0; s < SENSOR_COUNT; s++) {
+      sensors[b].setResolution(sensorsList[b][s], SENSOR_RESOLUTION);
+    }
   }
 
   // 433Mhz:
@@ -84,15 +109,19 @@ void setup(void) {
 void loop(void) {
 
   // Initialize the data:
-  sensors.requestTemperatures();
   str1 = String();
   str2 = String();
 
-  // Read the temperatures:
-  for (int i = 0; i < SENSOR_COUNT; i++) {
-    temp = sensors.getTempC(sensorList[i]);
-    str2 = str1 + ' ' + temp;
-    str1 = str2;
+  for (int b = 0; b < BUSES_COUNT; b++) {
+
+    sensors[b].requestTemperatures();
+
+    // Read the temperatures:
+    for (int s = 0; s < SENSOR_COUNT; s++) {
+      temp = sensors[b].getTempC(sensorsList[b][s]);
+      str2 = str1 + ' ' + temp;
+      str1 = str2;
+    }
   }
 
   // Print to serial console:
