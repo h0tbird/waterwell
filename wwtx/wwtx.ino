@@ -58,33 +58,35 @@ RH_ASK rf_driver;
 void printSensors(void){
 
   uint8_t deviceCount;
-  byte addr[8];
+  uint8_t addr[8];
 
-  for (int b = 0; b < BUSES_COUNT; b++) {
+  for (uint8_t b=0; b<BUSES_COUNT; b++) {
 
     deviceCount = sensors[b].getDeviceCount();
     Serial.print("\nBus[");
-    Serial.print(b);
+    Serial.print(b, DEC);
     Serial.print("] has ");
-    Serial.print(deviceCount);
+    Serial.print(deviceCount, DEC);
     Serial.println(" sensors:");
 
-    for(int s = 0; s < deviceCount; s++) {
+    for(uint8_t s=0; s<deviceCount; s++) {
 
       Serial.print("sensor[");
-      Serial.print(s);
+      Serial.print(s, DEC);
       Serial.print("] =");
 
-      sensors[b].getAddress(addr, (uint8_t)s);
+      sensors[b].getAddress(addr, s);
 
-      for (int i = 0; i < 8; i++) {
-        Serial.write(' ');
+      for (uint8_t i=0; i<8; i++) {
+        Serial.print(" ");
         Serial.print(addr[i], HEX);
       }
-      Serial.println();
+
+      Serial.println("");
     }
   }
-  Serial.println();
+
+  Serial.println("");
 }
 
 //-----------------------------------------------------------------------------
