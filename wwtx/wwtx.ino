@@ -5,8 +5,10 @@
 // Constants:
 #define ONE_WIRE_BUS_0 2
 #define ONE_WIRE_BUS_1 3
+#define ONE_WIRE_BUS_2 4
+#define ONE_WIRE_BUS_3 5
 #define SENSOR_RESOLUTION 12
-#define BUSES_COUNT 2
+#define BUSES_COUNT 3
 #define SENSOR_COUNT 3
 
 // Variables:
@@ -17,12 +19,14 @@ String str1, str2;
 OneWire buses[BUSES_COUNT] = {
   OneWire(ONE_WIRE_BUS_0),
   OneWire(ONE_WIRE_BUS_1),
+  OneWire(ONE_WIRE_BUS_2),
 };
 
 // Initialize sensors:
 DallasTemperature sensors[BUSES_COUNT] = {
   DallasTemperature(&buses[0]),
   DallasTemperature(&buses[1]),
+  DallasTemperature(&buses[2]),
 };
 
 // Sensors list:
@@ -36,6 +40,11 @@ DeviceAddress sensorsList [BUSES_COUNT] [SENSOR_COUNT] = {
     { 0x28, 0xD0, 0xEC, 0x77, 0x91, 0x9, 0x2, 0x82 },  // 04
     { 0x28, 0xE0, 0x6D, 0x77, 0x91, 0x10, 0x2, 0x37 }, // 05
     { 0x28, 0x2C, 0x1C, 0x77, 0x91, 0x6, 0x2, 0x33 },  // 06
+  },
+  {
+    { 0x28, 0x54, 0x6E, 0x77, 0x91, 0xC, 0x2, 0x3 },   // 07
+    { 0x28, 0x3, 0xE2, 0x77, 0x91, 0xE, 0x2, 0xD3 },   // 08
+    { 0x28, 0x76, 0xA2, 0x77, 0x91, 0x15, 0x2, 0x86 }, // 09
   },
 };
 
@@ -124,15 +133,19 @@ void loop(void) {
     }
   }
 
+  static char *msg = str2.c_str();
+
   // Print to serial console:
   Serial.print("Temperatures TX:");
-  Serial.println(str2);
+  Serial.print(str2);
+  Serial.print(" (");
+  Serial.print(strlen(msg));
+  Serial.println(")");
 
   // Transfer via 433MHz:
-  static char *msg = str2.c_str();
   rf_driver.send((uint8_t *)msg, strlen(msg));
   rf_driver.waitPacketSent();
 
   // Sleep:
-  delay(2000);
+  delay(5000);
 }
