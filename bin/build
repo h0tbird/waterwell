@@ -9,15 +9,32 @@
 }
 
 #------------------------------------------------------------------------------
+# Variables:
+#------------------------------------------------------------------------------
+
+FQBN='archlinux-arduino:avr:uno'
+HARDWARE='/usr/share/arduino/hardware'
+TOOLS1='/usr/bin'
+TOOLS2='/usr/bin'
+
+VERSION='1.8.6'
+FQBN='arduino:avr:uno'
+HARDWARE="/opt/arduino/arduino-${VERSION}/hardware"
+TOOLS1="/opt/arduino/arduino-${VERSION}/tools-builder"
+TOOLS2="/opt/arduino/arduino-${VERSION}/hardware/tools"
+
+#------------------------------------------------------------------------------
 # Build:
 #------------------------------------------------------------------------------
 
 arduino-builder \
--fqbn archlinux-arduino:avr:uno \
--hardware /usr/share/arduino/hardware \
+-compile \
+-fqbn ${FQBN} \
+-hardware ${HARDWARE} \
 -build-path ${PWD}/.build \
 -libraries libs \
--tools /usr/bin \
+-tools ${TOOLS1} \
+-tools ${TOOLS2} \
 ww${TXRX}/ww${TXRX}.ino
 
 #------------------------------------------------------------------------------

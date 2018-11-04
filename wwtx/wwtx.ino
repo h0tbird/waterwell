@@ -99,9 +99,9 @@ void setup(void) {
   Serial.begin(9600);
 
   // DS18B20:
-  for (int b = 0; b < BUSES_COUNT; b++) {
+  for (uint8_t b=0; b<BUSES_COUNT; b++) {
     sensors[b].begin();
-    for (int s = 0; s < SENSOR_COUNT; s++) {
+    for (uint8_t s=0; s<SENSOR_COUNT; s++) {
       sensors[b].setResolution(sensorsList[b][s], SENSOR_RESOLUTION);
     }
   }
@@ -123,12 +123,12 @@ void loop(void) {
   str1 = String();
   str2 = String();
 
-  for (int b = 0; b < BUSES_COUNT; b++) {
+  for (uint8_t b=0; b<BUSES_COUNT; b++) {
 
     sensors[b].requestTemperatures();
 
     // Read the temperatures:
-    for (int s = 0; s < SENSOR_COUNT; s++) {
+    for (uint8_t s=0; s<SENSOR_COUNT; s++) {
       temp = sensors[b].getTempC(sensorsList[b][s]);
       str2 = str1 + ' ' + temp;
       str1 = str2;
@@ -141,7 +141,7 @@ void loop(void) {
   Serial.print("Temperatures TX:");
   Serial.print(str2);
   Serial.print(" (");
-  Serial.print(strlen(msg));
+  Serial.print((unsigned int)strlen(msg));
   Serial.println(")");
 
   // Transfer via 433MHz:
