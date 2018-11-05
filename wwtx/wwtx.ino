@@ -13,7 +13,7 @@
 
 // Variables:
 float temp;
-String str1, str2;
+char str[2][80];
 
 // Initialize buses:
 OneWire buses[BUSES_COUNT] = {
@@ -120,8 +120,8 @@ void setup(void) {
 void loop(void) {
 
   // Initialize the data:
-  str1 = String();
-  str2 = String();
+  str[0][0] = '\0';
+  str[1][0] = '\0';
 
   for (uint8_t b=0; b<BUSES_COUNT; b++) {
 
@@ -129,23 +129,25 @@ void loop(void) {
 
     // Read the temperatures:
     for (uint8_t s=0; s<SENSOR_COUNT; s++) {
+
       temp = sensors[b].getTempC(sensorsList[b][s]);
-      str2 = str1 + ' ' + temp;
-      str1 = str2;
+
+      strcat(str[0], " ");
+      dtostrf(temp, 7, 4, str[1]);
+      strcat(str[0], str[1]);
+      strcpy(str[1], str[0]);
     }
   }
 
-  static char *msg = str2.c_str();
-
   // Print to serial console:
   Serial.print("Temperatures TX:");
-  Serial.print(str2);
+  Serial.print(str[1]);
   Serial.print(" (");
-  Serial.print((unsigned int)strlen(msg));
+  Serial.print((unsigned int)strlen(str[1]));
   Serial.println(")");
 
   // Transfer via 433MHz:
-  rf_driver.send((uint8_t *)msg, strlen(msg));
+  rf_driver.send((uint8_t *)str[1], strlen(str[1]));
   rf_driver.waitPacketSent();
 
   // Sleep:
